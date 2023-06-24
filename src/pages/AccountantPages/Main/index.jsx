@@ -22,6 +22,7 @@ function PaymentPage() {
   const [openModal, setModalOpen] = useState(false);
 
   const groups = useSelector((s) => s.groups.groups);
+  const getGroupsLoading = useSelector((s) => s.groups.getGroups.loading);
   const groupPayment = useSelector((s) => s.financials.groupPayment);
 
   const dispatch = useDispatch();
@@ -35,6 +36,10 @@ function PaymentPage() {
       dispatch(getGroupPayment({ group_id: activeCourse.id }));
     }
   }, [activeCourse]);
+
+  if (getGroupsLoading) {
+    return <Loader />;
+  }
   return (
     <MainLayout>
       <h1>Страница оплаты</h1>

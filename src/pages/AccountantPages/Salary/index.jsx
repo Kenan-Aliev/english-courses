@@ -19,11 +19,13 @@ import Loader from "../../../components/Loader";
 import { getUsers } from "../../../store/users/usersActions";
 import MySelect from "../../../components/MySelect";
 import { months } from "../../../data/months";
-import { createSalary } from "../../../store/financials/financialsActions";
+import {
+  createSalary,
+  getSalaries,
+} from "../../../store/financials/financialsActions";
 
 // Компонент страницы оплаты
 function SalaryPage() {
-  const [activeCourse, setActiveCourse] = useState(null);
   const [openModal, setModalOpen] = useState(false);
 
   const [salaryData, setSalaryData] = useState({
@@ -31,6 +33,13 @@ function SalaryPage() {
     month: "",
   });
 
+  const salaries = useSelector((s) => s.financials.salaries);
+  const getSalariesLoading = useSelector(
+    (s) => s.financials.getSalaries.loading
+  );
+  const createSalarySuccess = useSelector(
+    (s) => s.financials.createSalary.success
+  );
   const teachers = useSelector((s) => s.users.users).map((t) => ({
     text: t.surname + " " + t.name,
     value: t.id,
@@ -47,7 +56,18 @@ function SalaryPage() {
   };
   useEffect(() => {
     dispatch(getUsers({ role: 2 }));
+    dispatch(getSalaries());
   }, []);
+
+  useEffect(() => {
+    if (createSalarySuccess) {
+      setModalOpen(false);
+    }
+  }, [createSalarySuccess]);
+
+  if (getSalariesLoading) {
+    return <Loader />;
+  }
 
   return (
     <MainLayout>
@@ -62,29 +82,35 @@ function SalaryPage() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Название группы</TableCell>
-            <TableCell>Стоимость курса</TableCell>
+            <TableCell>
+              <b>Сумма зарплаты</b>
+            </TableCell>
+            <TableCell>
+              <b>Преподаватель</b>
+            </TableCell>
+            <TableCell>
+              <b>Месяц</b>
+            </TableCell>
           </TableRow>
         </TableHead>
-        {/* <TableBody>
-          {groups.map((course) => (
+        <TableBody>
+          {salaries.map((salary) => (
             <TableRow
-              key={course.id}
-              onClick={() => {
-                setActiveCourse(course);
-                setModalOpen(true);
-              }}
+              key={salary.id}
               sx={{
                 "&:hover": {
                   cursor: "pointer",
                 },
               }}
             >
-              <TableCell>{course.name}</TableCell>
-              <TableCell>{course.price}</TableCell>
+              <TableCell>{salary.salary_sum} сом</TableCell>
+              <TableCell>
+                {salary.teacher.surname} {salary.teacher.name}
+              </TableCell>
+              <TableCell>{salary.month.name}</TableCell>
             </TableRow>
           ))}
-        </TableBody> */}
+        </TableBody>
       </Table>
 
       <ModalComponent

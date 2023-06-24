@@ -128,7 +128,6 @@ const financialsSlice = createSlice({
           success: true,
           failed: false,
         };
-        state.groupPayment = action.payload;
       })
       .addCase(createSalary.rejected, (state, action) => {
         state.createSalary = {
