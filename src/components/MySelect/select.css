@@ -1,0 +1,7 @@
+.custom-select-root .MuiOutlinedInput-notchedOutline {
+  border-color: #ccc;
+}
+
+.custom-select-focused .MuiOutlinedInput-notchedOutline {
+  border-color: blue;
+}
